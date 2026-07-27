@@ -76,6 +76,10 @@ export default function Charts({ data }: Props) {
               nameKey="category"
               outerRadius={120}
               label
+              isAnimationActive={true}
+              animationDuration={1200}
+              animationBegin={200}
+              animationEasing="ease-out"
             >
 
               {
@@ -138,7 +142,6 @@ export default function Charts({ data }: Props) {
             data={data}
           >
 
-
             <CartesianGrid />
 
 
@@ -156,6 +159,10 @@ export default function Charts({ data }: Props) {
 
             <Bar
               dataKey="amount"
+              isAnimationActive={true}
+              animationDuration={1200}
+              animationBegin={300}
+              animationEasing="ease-out"
             >
 
               {
