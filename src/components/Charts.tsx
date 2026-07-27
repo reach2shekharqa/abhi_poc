@@ -33,6 +33,9 @@ const COLORS = [
 export default function Charts({ data }: Props) {
 
 
+  console.log("Chart data:", data);
+
+
   if (data.length === 0) {
     return (
       <p>
@@ -44,10 +47,8 @@ export default function Charts({ data }: Props) {
 
   return (
 
-    <div>
+    <div className="w-full">
 
-
-      {/* PIE CHART */}
 
       <h2 className="
         text-2xl
@@ -59,13 +60,16 @@ export default function Charts({ data }: Props) {
 
 
       <div
-        style={{
-          width: "100%",
-          height: 350
-        }}
+        className="
+          w-full
+          h-[350px]
+        "
       >
 
-        <ResponsiveContainer>
+        <ResponsiveContainer
+          width="100%"
+          height="100%"
+        >
 
           <PieChart>
 
@@ -74,12 +78,13 @@ export default function Charts({ data }: Props) {
               data={data}
               dataKey="amount"
               nameKey="category"
-              outerRadius={120}
+              cx="50%"
+              cy="50%"
+              outerRadius={110}
               label
               isAnimationActive={true}
               animationDuration={1200}
               animationBegin={200}
-              animationEasing="ease-out"
             >
 
               {
@@ -103,19 +108,14 @@ export default function Charts({ data }: Props) {
 
             <Legend />
 
-
           </PieChart>
 
 
         </ResponsiveContainer>
 
-
       </div>
 
 
-
-
-      {/* BAR CHART */}
 
       <h2 className="
         text-2xl
@@ -129,17 +129,25 @@ export default function Charts({ data }: Props) {
 
 
       <div
-        style={{
-          width: "100%",
-          height: 350
-        }}
+        className="
+          w-full
+          h-[350px]
+        "
       >
 
-        <ResponsiveContainer>
-
+        <ResponsiveContainer
+          width="100%"
+          height="100%"
+        >
 
           <BarChart
             data={data}
+            margin={{
+              top:20,
+              right:20,
+              left:0,
+              bottom:40
+            }}
           >
 
             <CartesianGrid />
@@ -147,6 +155,9 @@ export default function Charts({ data }: Props) {
 
             <XAxis
               dataKey="category"
+              angle={-35}
+              textAnchor="end"
+              height={70}
             />
 
 
@@ -161,8 +172,6 @@ export default function Charts({ data }: Props) {
               dataKey="amount"
               isAnimationActive={true}
               animationDuration={1200}
-              animationBegin={300}
-              animationEasing="ease-out"
             >
 
               {
@@ -180,7 +189,6 @@ export default function Charts({ data }: Props) {
 
 
             </Bar>
-
 
 
           </BarChart>
