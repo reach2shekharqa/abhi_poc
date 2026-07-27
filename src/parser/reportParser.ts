@@ -9,16 +9,16 @@ export function parseReport(text: string): ReportData[] {
   const result: ReportData[] = [];
 
 
-  /*
-    Matches multiple patterns:
+  // Remove heading
+  text = text.replace(
+    /Monthly Expense Report/gi,
+    ""
+  );
 
-    Food:12000
-    Rent:25000
-    Travel:5000
-  */
 
+  // Find all Category: Amount pairs
   const regex =
-    /([A-Za-z\s]+?)\s*[:\-]\s*([\d,]+)/g;
+    /([A-Za-z]+)\s*:\s*([\d,]+)/g;
 
 
   let match;
@@ -26,31 +26,18 @@ export function parseReport(text: string): ReportData[] {
 
   while ((match = regex.exec(text)) !== null) {
 
-    let category = match[1].trim();
+    const category = match[1].trim();
 
     const amount = Number(
       match[2].replace(/,/g, "")
     );
 
 
-    // Remove unwanted PDF headings
-    category = category
-      .replace(
-        /Monthly Expense Report/gi,
-        ""
-      )
-      .trim();
+    result.push({
+      category,
+      amount
+    });
 
-
-    // Avoid empty values
-    if (category && amount > 0) {
-
-      result.push({
-        category,
-        amount
-      });
-
-    }
   }
 
 
