@@ -46,16 +46,29 @@ export default function Charts({ data }: Props) {
 
     <div>
 
-      <h2 className="text-2xl font-bold mb-4">
+
+      {/* PIE CHART */}
+
+      <h2 className="
+        text-2xl
+        font-bold
+        mb-4
+      ">
         Expense Analysis
       </h2>
 
 
-      <div style={{ width: "100%", height: 350 }}>
+      <div
+        style={{
+          width: "100%",
+          height: 350
+        }}
+      >
 
         <ResponsiveContainer>
 
           <PieChart>
+
 
             <Pie
               data={data}
@@ -67,14 +80,17 @@ export default function Charts({ data }: Props) {
 
               {
                 data.map((_, index) => (
+
                   <Cell
                     key={index}
                     fill={
                       COLORS[index % COLORS.length]
                     }
                   />
+
                 ))
               }
+
 
             </Pie>
 
@@ -83,43 +99,88 @@ export default function Charts({ data }: Props) {
 
             <Legend />
 
+
           </PieChart>
 
+
         </ResponsiveContainer>
+
 
       </div>
 
 
 
-      <h2 className="text-2xl font-bold mb-4 mt-8">
+
+      {/* BAR CHART */}
+
+      <h2 className="
+        text-2xl
+        font-bold
+        mb-4
+        mt-8
+      ">
         Category Comparison
       </h2>
 
 
-      <div style={{ width: "100%", height: 350 }}>
+
+      <div
+        style={{
+          width: "100%",
+          height: 350
+        }}
+      >
 
         <ResponsiveContainer>
 
-          <BarChart data={data}>
+
+          <BarChart
+            data={data}
+          >
+
 
             <CartesianGrid />
+
 
             <XAxis
               dataKey="category"
             />
 
+
             <YAxis />
+
 
             <Tooltip />
 
+
+
             <Bar
               dataKey="amount"
-              fill="#06b6d4"
-            />
+            >
+
+              {
+                data.map((_, index) => (
+
+                  <Cell
+                    key={index}
+                    fill={
+                      COLORS[index % COLORS.length]
+                    }
+                  />
+
+                ))
+              }
+
+
+            </Bar>
+
+
 
           </BarChart>
 
+
         </ResponsiveContainer>
+
 
       </div>
 
@@ -127,4 +188,5 @@ export default function Charts({ data }: Props) {
     </div>
 
   );
+
 }
