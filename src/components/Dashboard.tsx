@@ -133,38 +133,32 @@ export default function Dashboard({
         {/* Records */}
 
         <div className="
-          bg-white/10
-          backdrop-blur-xl
-          border
-          border-white/20
-          rounded-3xl
-          p-6
-          shadow-xl
-          hover:scale-105
-          transition
-        ">
+  bg-white/10
+  backdrop-blur-xl
+  border
+  border-white/20
+  rounded-3xl
+  p-6
+  shadow-xl
+">
 
 
-          <div className="text-4xl">
-            📄
-          </div>
+  <div className="
+    text-green-400
+    text-xl
+    mb-4
+  ">
+    Records loaded: {data.length}
+  </div>
 
 
-          <p className="text-gray-300 mt-4">
-            Categories Detected
-          </p>
+  <Charts
+    key={data.length}
+    data={data}
+  />
 
 
-          <h3 className="
-            text-3xl
-            font-bold
-            mt-2
-          ">
-            {data.length}
-          </h3>
-
-
-        </div>
+</div>
 
 
       </div>
