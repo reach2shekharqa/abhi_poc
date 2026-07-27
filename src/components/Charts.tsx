@@ -62,7 +62,7 @@ export default function Charts({ data }: Props) {
       <div
         className="
           w-full
-          h-[350px]
+          h-[300px] md:h-[400px]
         "
       >
 

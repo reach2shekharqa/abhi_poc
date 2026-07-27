@@ -44,12 +44,14 @@ export default function Dashboard({
 
       <div className="
         grid
-        md:grid-cols-3
+        grid-cols-1
+        sm:grid-cols-2
+        lg:grid-cols-3
         gap-6
       ">
 
 
-        {/* Total */}
+        {/* Total Amount */}
 
         <div className="
           bg-white/10
@@ -58,16 +60,19 @@ export default function Dashboard({
           border-white/20
           rounded-3xl
           p-6
-          shadow-xl
-          hover:scale-105
+          shadow-2xl
           transition
+          hover:scale-105
         ">
 
           <div className="text-4xl">
             💰
           </div>
 
-          <p className="text-gray-300 mt-4">
+          <p className="
+            text-gray-300
+            mt-4
+          ">
             Total Amount
           </p>
 
@@ -84,7 +89,7 @@ export default function Dashboard({
 
 
 
-        {/* Highest */}
+        {/* Highest Category */}
 
         <div className="
           bg-white/10
@@ -93,9 +98,9 @@ export default function Dashboard({
           border-white/20
           rounded-3xl
           p-6
-          shadow-xl
-          hover:scale-105
+          shadow-2xl
           transition
+          hover:scale-105
         ">
 
           <div className="text-4xl">
@@ -103,7 +108,10 @@ export default function Dashboard({
           </div>
 
 
-          <p className="text-gray-300 mt-4">
+          <p className="
+            text-gray-300
+            mt-4
+          ">
             Highest Category
           </p>
 
@@ -130,35 +138,44 @@ export default function Dashboard({
 
 
 
-        {/* Records */}
+        {/* Categories */}
 
         <div className="
-  bg-white/10
-  backdrop-blur-xl
-  border
-  border-white/20
-  rounded-3xl
-  p-6
-  shadow-xl
-">
+          bg-white/10
+          backdrop-blur-xl
+          border
+          border-white/20
+          rounded-3xl
+          p-6
+          shadow-2xl
+          transition
+          hover:scale-105
+        ">
 
 
-  <div className="
-    text-green-400
-    text-xl
-    mb-4
-  ">
-    Records loaded: {data.length}
-  </div>
+          <div className="text-4xl">
+            📄
+          </div>
 
 
-  <Charts
-    key={data.length}
-    data={data}
-  />
+          <p className="
+            text-gray-300
+            mt-4
+          ">
+            Categories Detected
+          </p>
 
 
-</div>
+          <h3 className="
+            text-3xl
+            font-bold
+            mt-2
+          ">
+            {data.length}
+          </h3>
+
+
+        </div>
 
 
       </div>
@@ -166,19 +183,26 @@ export default function Dashboard({
 
 
 
+
+      {/* Charts Section */}
+
       <div className="
         bg-white/10
         backdrop-blur-xl
         border
         border-white/20
         rounded-3xl
-        p-6
-        shadow-xl
+        p-8
+        shadow-2xl
+        mt-8
       ">
 
+
         <Charts
+          key={data.length}
           data={data}
         />
+
 
       </div>
 
