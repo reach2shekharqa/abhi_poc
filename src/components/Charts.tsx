@@ -12,6 +12,8 @@ import {
   ResponsiveContainer
 } from "recharts";
 
+import { useEffect, useState } from "react";
+
 import type { ReportData } from "../parser/reportParser";
 
 
@@ -33,16 +35,28 @@ const COLORS = [
 export default function Charts({ data }: Props) {
 
 
-  console.log("Chart data:", data);
+  const [chartKey, setChartKey] = useState(0);
+
+
+
+  useEffect(() => {
+
+    setChartKey(prev => prev + 1);
+
+  }, [data]);
+
 
 
   if (data.length === 0) {
+
     return (
       <p>
         No data available
       </p>
     );
+
   }
+
 
 
   return (
@@ -59,14 +73,17 @@ export default function Charts({ data }: Props) {
       </h2>
 
 
+
       <div
         className="
           w-full
-          h-[300px] md:h-[400px]
+          h-[300px]
+          md:h-[400px]
         "
       >
 
         <ResponsiveContainer
+          key={`pie-${chartKey}`}
           width="100%"
           height="100%"
         >
@@ -75,26 +92,35 @@ export default function Charts({ data }: Props) {
 
 
             <Pie
+
               data={data}
               dataKey="amount"
               nameKey="category"
+
               cx="50%"
               cy="50%"
+
               outerRadius={110}
+
               label
+
               isAnimationActive={true}
               animationDuration={1200}
-              animationBegin={200}
+
             >
+
 
               {
                 data.map((_, index) => (
 
                   <Cell
+
                     key={index}
+
                     fill={
                       COLORS[index % COLORS.length]
                     }
+
                   />
 
                 ))
@@ -104,16 +130,21 @@ export default function Charts({ data }: Props) {
             </Pie>
 
 
+
             <Tooltip />
 
             <Legend />
+
 
           </PieChart>
 
 
         </ResponsiveContainer>
 
+
       </div>
+
+
 
 
 
@@ -128,40 +159,59 @@ export default function Charts({ data }: Props) {
 
 
 
+
       <div
         className="
           w-full
-          h-[350px]
+          h-[300px]
+          md:h-[400px]
         "
       >
 
         <ResponsiveContainer
+
+          key={`bar-${chartKey}`}
+
           width="100%"
+
           height="100%"
+
         >
 
+
           <BarChart
+
             data={data}
+
             margin={{
               top:20,
               right:20,
-              left:0,
-              bottom:40
+              left:10,
+              bottom:50
             }}
+
           >
+
 
             <CartesianGrid />
 
 
             <XAxis
+
               dataKey="category"
+
               angle={-35}
+
               textAnchor="end"
+
               height={70}
+
             />
 
 
+
             <YAxis />
+
 
 
             <Tooltip />
@@ -169,19 +219,27 @@ export default function Charts({ data }: Props) {
 
 
             <Bar
+
               dataKey="amount"
+
               isAnimationActive={true}
+
               animationDuration={1200}
+
             >
+
 
               {
                 data.map((_, index) => (
 
                   <Cell
+
                     key={index}
+
                     fill={
                       COLORS[index % COLORS.length]
                     }
+
                   />
 
                 ))
@@ -189,6 +247,7 @@ export default function Charts({ data }: Props) {
 
 
             </Bar>
+
 
 
           </BarChart>
