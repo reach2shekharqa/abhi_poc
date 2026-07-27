@@ -38,7 +38,6 @@ export default function Charts({ data }: Props) {
   const [chartKey, setChartKey] = useState(0);
 
 
-
   useEffect(() => {
 
     setChartKey(prev => prev + 1);
@@ -75,60 +74,48 @@ export default function Charts({ data }: Props) {
 
 
       <div
-        className="
-          w-full
-          h-[300px]
-          md:h-[400px]
-        "
+        style={{
+          width: "100%",
+          height: 320,
+          minWidth: 300
+        }}
       >
 
         <ResponsiveContainer
           key={`pie-${chartKey}`}
           width="100%"
-          height="100%"
+          height={320}
         >
 
           <PieChart>
 
 
             <Pie
-
               data={data}
               dataKey="amount"
               nameKey="category"
-
               cx="50%"
               cy="50%"
-
-              outerRadius={110}
-
+              outerRadius={90}
               label
-
               isAnimationActive={true}
               animationDuration={1200}
-
             >
-
 
               {
                 data.map((_, index) => (
 
                   <Cell
-
                     key={index}
-
                     fill={
                       COLORS[index % COLORS.length]
                     }
-
                   />
 
                 ))
               }
 
-
             </Pie>
-
 
 
             <Tooltip />
@@ -161,11 +148,11 @@ export default function Charts({ data }: Props) {
 
 
       <div
-        className="
-          w-full
-          h-[300px]
-          md:h-[400px]
-        "
+        style={{
+          width: "100%",
+          height: 320,
+          minWidth: 300
+        }}
       >
 
         <ResponsiveContainer
@@ -174,7 +161,7 @@ export default function Charts({ data }: Props) {
 
           width="100%"
 
-          height="100%"
+          height={320}
 
         >
 
@@ -187,7 +174,7 @@ export default function Charts({ data }: Props) {
               top:20,
               right:20,
               left:10,
-              bottom:50
+              bottom:60
             }}
 
           >
@@ -197,21 +184,14 @@ export default function Charts({ data }: Props) {
 
 
             <XAxis
-
               dataKey="category"
-
               angle={-35}
-
               textAnchor="end"
-
-              height={70}
-
+              height={80}
             />
 
 
-
             <YAxis />
-
 
 
             <Tooltip />
@@ -227,7 +207,6 @@ export default function Charts({ data }: Props) {
               animationDuration={1200}
 
             >
-
 
               {
                 data.map((_, index) => (
@@ -247,7 +226,6 @@ export default function Charts({ data }: Props) {
 
 
             </Bar>
-
 
 
           </BarChart>
