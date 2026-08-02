@@ -1,31 +1,57 @@
+import {
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+} from "recharts";
+
 import Charts from "./Charts";
-import type { ReportData } from "../parser/reportParser";
+
+import type { DashboardSnapshot } from "../types";
 
 
 interface Props {
-  data: ReportData[];
+  snapshot: DashboardSnapshot;
+  unit: string;
+  entityOptions: Array<{ id: string; name: string }>;
+  selectedEntityId: string;
+  selectedYear: number;
+  onEntityChange: (value: string) => void;
+  onYearChange: (value: number) => void;
 }
 
+const inventoryColors = ["#06b6d4", "#8b5cf6", "#10b981"];
 
 export default function Dashboard({
-  data
+  snapshot,
+  unit,
+  entityOptions,
+  selectedEntityId,
+  selectedYear,
+  onEntityChange,
+  onYearChange,
 }: Props) {
 
+  const inventoryTotal = snapshot.inventorySnapshot.rawMaterial + snapshot.inventorySnapshot.workInProgress + snapshot.inventorySnapshot.finishedGoods;
+  const assetTotal = snapshot.assetBreakdown.reduce((sum, item) => sum + item.value, 0);
+  const liabilityTotal = snapshot.liabilityBreakdown.reduce((sum, item) => sum + item.value, 0);
+  const costTotal = snapshot.costBreakdown.reduce((sum, item) => sum + item.amount, 0);
 
-  const totalAmount = data.reduce(
-    (sum, item) => sum + item.amount,
-    0
-  );
 
+  const inventoryData = [
+    { name: "Raw Material", value: snapshot.inventorySnapshot.rawMaterial },
+    { name: "Work in Progress", value: snapshot.inventorySnapshot.workInProgress },
+    { name: "Finished Goods", value: snapshot.inventorySnapshot.finishedGoods },
+  ];
 
-  const highestExpense = data.reduce(
-    (max, item) =>
-      item.amount > max.amount ? item : max,
-    {
-      category: "None",
-      amount: 0
+  const formatMetric = (value: number) => {
+    if (unit && unit !== "₹") {
+      return `${value.toLocaleString()} ${unit}`;
     }
-  );
+    return `₹${value.toLocaleString()}`;
+  };
 
 
   return (
@@ -33,179 +59,116 @@ export default function Dashboard({
     <div className="space-y-8">
 
 
-      <h2 className="
-        text-3xl
-        font-bold
-      ">
-        Analytics Overview
-      </h2>
+      <div className="rounded-3xl border border-white/15 bg-white/10 p-6 shadow-2xl backdrop-blur-xl">
 
 
-
-      <div className="
-        grid
-        grid-cols-1
-        sm:grid-cols-2
-        lg:grid-cols-3
-        gap-6
-      ">
+        <div className="mb-4 flex flex-wrap gap-3">
 
 
-        {/* Total Amount */}
+          <select
+            className="rounded-2xl border border-white/20 bg-slate-950/40 px-4 py-3"
+            value={selectedEntityId}
+            onChange={(event) => onEntityChange(event.target.value)}
+          >
+            {entityOptions.map((entity) => (
+              <option key={entity.id} value={entity.id}>{entity.name}</option>
+            ))}
+          </select>
 
-        <div className="
-          bg-white/10
-          backdrop-blur-xl
-          border
-          border-white/20
-          rounded-3xl
-          p-6
-          shadow-2xl
-          transition
-          hover:scale-105
-        ">
 
-          <div className="text-4xl">
-            💰
-          </div>
-
-          <p className="
-            text-gray-300
-            mt-4
-          ">
-            Total Amount
-          </p>
-
-          <h3 className="
-            text-3xl
-            font-bold
-            mt-2
-          ">
-            ₹ {totalAmount.toLocaleString()}
-          </h3>
+          <select
+            className="rounded-2xl border border-white/20 bg-slate-950/40 px-4 py-3"
+            value={selectedYear}
+            onChange={(event) => onYearChange(Number(event.target.value))}
+          >
+            <option value={2024}>2024</option>
+            <option value={2025}>2025</option>
+          </select>
 
         </div>
 
 
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
 
 
-        {/* Highest Category */}
-
-        <div className="
-          bg-white/10
-          backdrop-blur-xl
-          border
-          border-white/20
-          rounded-3xl
-          p-6
-          shadow-2xl
-          transition
-          hover:scale-105
-        ">
-
-          <div className="text-4xl">
-            📊
+          <div className="rounded-2xl bg-slate-950/40 p-4">
+            <p className="text-sm text-slate-300">Sales Trend Points</p>
+            <p className="mt-2 text-3xl font-bold">{snapshot.salesTrend.length}</p>
           </div>
 
 
-          <p className="
-            text-gray-300
-            mt-4
-          ">
-            Highest Category
-          </p>
+          <div className="rounded-2xl bg-slate-950/40 p-4">
+            <p className="text-sm text-slate-300">Latest Revenue</p>
+            <p className="mt-2 text-3xl font-bold">{formatMetric(snapshot.salesTrend[snapshot.salesTrend.length - 1]?.sales ?? 0)}</p>
+          </div>
 
 
-          <h3 className="
-            text-2xl
-            font-bold
-            mt-2
-          ">
-            {highestExpense.category}
-          </h3>
+          <div className="rounded-2xl bg-slate-950/40 p-4">
+            <p className="text-sm text-slate-300">Inventory Snapshot</p>
+            <p className="mt-2 text-3xl font-bold">{formatMetric(inventoryTotal)}</p>
+          </div>
 
 
-          <p className="
-            text-cyan-300
-            mt-1
-          ">
-            ₹ {highestExpense.amount.toLocaleString()}
-          </p>
+          <div className="rounded-2xl bg-slate-950/40 p-4">
+            <p className="text-sm text-slate-300">Asset Total</p>
+            <p className="mt-2 text-3xl font-bold">{formatMetric(assetTotal)}</p>
+          </div>
 
+
+          <div className="rounded-2xl bg-slate-950/40 p-4">
+            <p className="text-sm text-slate-300">Liability Total</p>
+            <p className="mt-2 text-3xl font-bold">{formatMetric(liabilityTotal)}</p>
+          </div>
 
         </div>
 
 
+        <div className="mt-6 grid gap-6 lg:grid-cols-2">
 
 
-        {/* Categories */}
-
-        <div className="
-          bg-white/10
-          backdrop-blur-xl
-          border
-          border-white/20
-          rounded-3xl
-          p-6
-          shadow-2xl
-          transition
-          hover:scale-105
-        ">
-
-
-          <div className="text-4xl">
-            📄
+          <div className="rounded-2xl bg-slate-950/40 p-4">
+            <h3 className="text-lg font-semibold">Inventory Snapshot</h3>
+            <div style={{ width: "100%", height: 320 }} className="mt-4">
+              <ResponsiveContainer width="100%" height={320}>
+                <PieChart>
+                  <Pie
+                    data={inventoryData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={45}
+                    outerRadius={90}
+                    label
+                  >
+                    {inventoryData.map((entry, index) => (
+                      <Cell key={`${entry.name}-${index}`} fill={inventoryColors[index % inventoryColors.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value: number) => formatMetric(value)} />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
 
-          <p className="
-            text-gray-300
-            mt-4
-          ">
-            Categories Detected
-          </p>
-
-
-          <h3 className="
-            text-3xl
-            font-bold
-            mt-2
-          ">
-            {data.length}
-          </h3>
-
+          <div className="rounded-2xl bg-slate-950/40 p-4">
+            <h3 className="text-lg font-semibold">Financial Summary</h3>
+            <div className="mt-4 space-y-2 text-sm">
+              <div className="flex justify-between"><span>Total Cost Components</span><span>{formatMetric(costTotal)}</span></div>
+              <div className="flex justify-between"><span>Asset Total</span><span>{formatMetric(assetTotal)}</span></div>
+              <div className="flex justify-between"><span>Liability Total</span><span>{formatMetric(liabilityTotal)}</span></div>
+            </div>
+          </div>
 
         </div>
-
 
       </div>
 
 
 
-
-
-      {/* Charts Section */}
-
-      <div className="
-        bg-white/10
-        backdrop-blur-xl
-        border
-        border-white/20
-        rounded-3xl
-        p-8
-        shadow-2xl
-        mt-8
-      ">
-
-
-        <Charts
-          key={data.length}
-          data={data}
-        />
-
-
-      </div>
-
+      <Charts snapshot={snapshot} unit={unit} />
 
 
     </div>
