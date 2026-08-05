@@ -9,7 +9,7 @@ import {
 } from "./config.js";
 
 import {
-  extractTextFromPdf,
+  extractPdfWithLlamaParse,
 } from "./pdfExtractor.js";
 
 import {
@@ -127,7 +127,7 @@ app.get(
         groqModel,
 
       pipeline:
-        "PDF -> text -> local embeddings -> FAISS -> relevant evidence -> Groq -> metrics",
+        "PDF -> LlamaParse Markdown -> local embeddings -> FAISS -> relevant evidence -> Groq -> metrics",
     });
 
   },
@@ -295,23 +295,27 @@ app.post(
       /*
        * ========================================================
        * STEP 1
-       * PDF -> TEXT
+       * PDF -> STRUCTURED MARKDOWN VIA LlamaParse
        * ========================================================
        */
 
       console.log(
-        "[PDF] Extracting embedded/OCR text...",
+        "[PDF] Extracting structured Markdown with LlamaParse...",
       );
 
 
-      const rawText =
-        await extractTextFromPdf(
+      let rawText =
+        await extractPdfWithLlamaParse(
           pdfFile.buffer,
         );
 
+      if (typeof rawText !== "string") {
+        rawText = String(rawText || "");
+      }
+
 
       console.log(
-        "[PDF] Raw extracted text length:",
+        "[PDF] Raw extracted markdown length:",
         rawText.length,
       );
 
@@ -347,6 +351,11 @@ app.post(
         cleanPdfText(
           rawText,
         );
+
+      const allChunks = cleanedText
+        .split("\n\n--- Page Break ---\n\n")
+        .map((chunk) => chunk.trim())
+        .filter(Boolean);
 
 
       console.log(
@@ -424,6 +433,7 @@ app.post(
         await extractRelevantFinancialContext({
           cleanedText,
           documentType,
+          markdownChunks: allChunks,
         });
 
 
@@ -756,7 +766,7 @@ app.listen(
 
 
     console.log(
-      "Pipeline: PDF -> PDF/OCR text -> local embeddings -> FAISS -> metric evidence -> Groq -> dashboard metrics",
+      "Pipeline: PDF -> LlamaParse Markdown -> local embeddings -> FAISS -> metric evidence -> Groq -> dashboard metrics",
     );
 
   },

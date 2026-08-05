@@ -33,9 +33,11 @@ const COLORS = [
 
 export default function Charts({ snapshot, unit }: Props) {
 
+  const effectiveUnit = unit && unit.toLowerCase() !== "unknown" ? unit : "₹";
+
   const formatMetric = (value: number) => {
-    if (unit && unit !== "₹") {
-      return `${value.toLocaleString()} ${unit}`;
+    if (effectiveUnit && effectiveUnit !== "₹") {
+      return `${value.toLocaleString()} ${effectiveUnit}`;
     }
     return `₹${value.toLocaleString()}`;
   };

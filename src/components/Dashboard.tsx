@@ -46,9 +46,11 @@ export default function Dashboard({
     { name: "Finished Goods", value: snapshot.inventorySnapshot.finishedGoods },
   ];
 
+  const effectiveUnit = unit && unit.toLowerCase() !== "unknown" ? unit : "₹";
+
   const formatMetric = (value: number) => {
-    if (unit && unit !== "₹") {
-      return `${value.toLocaleString()} ${unit}`;
+    if (effectiveUnit && effectiveUnit !== "₹") {
+      return `${value.toLocaleString()} ${effectiveUnit}`;
     }
     return `₹${value.toLocaleString()}`;
   };

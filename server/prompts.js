@@ -400,8 +400,17 @@ Do NOT substitute:
 - Total Income
 - Total Expenses
 
-Do NOT calculate operating profit unless the evidence explicitly
-provides the resulting operating-profit value.
+If the evidence does not explicitly report Operating Profit, then
+calculate it ONLY when the same evidence clearly reports both:
+- Profit Before Tax
+- Other Income
+
+In that case, compute:
+Operating Profit = Profit Before Tax - Other Income
+and use that result only if both values are clearly shown for the same
+financial year and there is no explicit Operating Profit row.
+
+Do NOT calculate operating profit from any other combination of values.
 
 
 ============================================================

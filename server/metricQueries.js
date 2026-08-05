@@ -31,348 +31,122 @@
 
 const financialMetricQueries = {
 
-  revenue: `
-Find the financial statement row containing the latest
-financial-year revenue / sales value.
+    revenue: `
+  Revenue from Operations Total Income Sale of Products Note 20
+  Revenue
+  Sales
+  Net Sales
+  Turnover
+  Income from Operations
+  Statement of Profit and Loss
+  Income Statement
+  Note 20
+  Financial Highlights
+  Financial-year table
+  `,
 
-PRIORITY:
-- Statement of Profit and Loss
-- Income Statement
-- Revenue section
-- Financial-year table with numeric values
+    fixedAssets: `
+  Property Plant and Equipment
+  Property, Plant & Equipment
+  PPE
+  Tangible Assets
+  Net Fixed Assets
+  Gross Block
+  Net Block
+  Asset schedule
+  Balance Sheet
+  Notes to Accounts
+  Financial Highlights
+  `,
 
-Look specifically for:
-- Revenue from Operations
-- Revenue
-- Sales
-- Net Sales
-- Turnover
-- Sales Turnover
-- Income from Operations
+    cashAndBalance: `
+  Cash and cash equivalents
+  Cash & Cash Equivalents
+  Cash and Bank Balances
+  Bank Balances
+  Balances with Banks
+  Balance Sheet
+  Cash Balance
+  Financial Highlights
+  `,
 
-Also retrieve the table heading and financial-year column labels
-surrounding the value.
+    debtors: `
+  Trade Receivables
+  Trade Debtors
+  Debtors
+  Accounts Receivable
+  Sundry Debtors
+  Receivables
+  Balance Sheet
+  Notes to Accounts
+  Note 16
+  Current Assets
+  Considered good
+  Undisputed
+  Financial Highlights
+  `,
 
-Do NOT prioritize:
-- Revenue growth percentages
-- Revenue commentary
-- Management discussion
-- Directors' Report narrative
-- Segment commentary
+    creditors: `
+  Trade Payables
+  Trade Creditors
+  Creditors
+  Accounts Payable
+  Sundry Creditors
+  Payables
+  Balance Sheet
+  Notes to Accounts
+  Current Liabilities
+  Financial Highlights
+  `,
 
-Return the PDF chunk containing the actual financial statement
-row and its numeric financial-year values.
-`,
+    borrowings: `
+  Borrowings
+  Loans and Borrowings
+  Bank Borrowings
+  Secured Loans
+  Unsecured Loans
+  Term Loans
+  Working Capital Loans
+  Short-term Borrowings
+  Long-term Borrowings
+  Debt
+  Financial Liabilities
+  Cash Credit Limits
+  Financial Highlights
+  `,
 
-  fixedAssets: `
-Find the Balance Sheet or Notes to Accounts row containing
-the latest financial-year fixed-asset value.
+    operatingProfit: `
+  Profit Before Tax Profit from Operations Total Expenses Operating Profit EBIT
+  Profit from Operations
+  Operating Profit
+  Statement of Profit and Loss
+  Financial-year table
+  `,
 
-PRIORITY:
-- Balance Sheet
-- Property, Plant and Equipment note
-- Fixed Assets note
-- Asset schedule
-- Financial-year table with numeric values
+    netProfit: `
+  Net Profit Profit After Tax PAT Profit for the Year Note 8
+  Profit attributable to owners
+  Statement of Profit and Loss
+  Income Statement
+  Note 8
+  Financial-year table
+  `,
 
-Look specifically for:
-- Fixed Assets
-- Property Plant and Equipment
-- Property, Plant and Equipment
-- PPE
-- Tangible Assets
-- Net Fixed Assets
+    financeCost: `
+  Finance Costs Interest Expense Borrowing Costs Note 26
+  Finance Cost
+  Interest Expense
+  Interest Cost
+  Borrowing Costs
+  Finance Charges
+  Interest on Borrowings
+  Statement of Profit and Loss
+  Notes to Accounts
+  Note 26
+  Financial Highlights
+  `,
 
-Also retrieve the table heading and financial-year column labels.
-
-Prefer NET fixed-asset values when both gross and accumulated
-depreciation values are present.
-
-Do NOT prioritize:
-- Asset commentary
-- Capital expenditure discussion
-- Depreciation narrative
-- Future investment plans
-
-Return the PDF chunk containing the actual asset table.
-`,
-
-  cashAndBalance: `
-Find the Balance Sheet or Notes to Accounts row containing
-the latest financial-year cash / bank balance.
-
-PRIORITY:
-- Balance Sheet
-- Cash and cash equivalents note
-- Cash and bank balance note
-- Financial-year table with numeric values
-
-Look specifically for:
-- Cash and Cash Equivalents
-- Cash & Cash Equivalents
-- Cash and Bank Balances
-- Cash and Bank
-- Bank Balances
-- Bank Balance
-- Cash Balance
-- Cash and Cash Equivalent
-
-Also retrieve the financial-year column labels.
-
-Do NOT prioritize:
-- Cash-flow commentary
-- Operating cash flow discussion
-- Cash generation narrative
-- Future liquidity commentary
-
-Return the PDF chunk containing the actual balance-sheet
-cash / bank value.
-`,
-
-  debtors: `
-Find the Balance Sheet or Notes to Accounts row containing
-the latest financial-year TRADE RECEIVABLES value.
-
-PRIORITY:
-- Balance Sheet
-- Trade receivables note
-- Current assets section
-- Receivables schedule
-- Financial-year table with numeric values
-
-Look specifically for:
-- Trade Receivables
-- Trade Debtors
-- Debtors
-- Accounts Receivable
-- Sundry Debtors
-- Receivables
-
-IMPORTANT:
-Retrieve the actual numeric balance-sheet value.
-Do NOT infer debtors from revenue, sales, turnover, percentages,
-collection days, or management commentary.
-
-If the receivables note contains:
-- Gross receivables
-- Allowance / provision
-- Net trade receivables
-
-retrieve the values and surrounding table context so the
-extraction layer can determine the reported balance correctly.
-
-Also retrieve the financial-year column labels.
-
-Do NOT prioritize:
-- Debtor days
-- Collection period
-- Customer commentary
-- Credit policy discussion
-- Receivable ageing commentary unless it contains the
-  actual balance
-`,
-
-  creditors: `
-Find the Balance Sheet or Notes to Accounts row containing
-the latest financial-year TRADE PAYABLES value.
-
-PRIORITY:
-- Balance Sheet
-- Trade payables note
-- Current liabilities section
-- Payables schedule
-- Financial-year table with numeric values
-
-Look specifically for:
-- Trade Payables
-- Trade Creditors
-- Creditors
-- Accounts Payable
-- Sundry Creditors
-- Payables
-
-IMPORTANT:
-Retrieve the actual numeric balance-sheet value.
-Do NOT infer creditors from expenses, purchases, payable days,
-percentages, or management commentary.
-
-Also retrieve the financial-year column labels and table heading.
-
-Do NOT prioritize:
-- Payable days
-- Supplier commentary
-- Payment policy discussion
-- Narrative references to creditors
-`,
-
-  borrowings: `
-Find the Balance Sheet or Notes to Accounts values for the
-latest financial-year BORROWINGS / DEBT.
-
-PRIORITY:
-- Balance Sheet
-- Borrowings note
-- Financial liabilities note
-- Current liabilities
-- Non-current liabilities
-- Loans and borrowings schedule
-
-Look specifically for:
-- Borrowings
-- Loans and Borrowings
-- Bank Borrowings
-- Secured Loans
-- Unsecured Loans
-- Term Loans
-- Working Capital Loans
-- Bank Loans
-- Debt
-- Financial Liabilities
-
-IMPORTANT:
-Retrieve the actual reported numeric borrowing values.
-
-If borrowings are split into:
-- Current borrowings
-- Non-current borrowings
-- Short-term borrowings
-- Long-term borrowings
-
-retrieve the relevant rows and surrounding table context so
-they can be correctly interpreted later.
-
-Do NOT prioritize:
-- Loan repayment commentary
-- Interest-rate discussion
-- Guarantees
-- Contingent liabilities
-- Borrowing arrangements
-- Management commentary
-
-Also retrieve the financial-year column labels.
-`,
-
-  operatingProfit: `
-Find the actual operating-profit value from the financial
-statement for the latest financial year.
-
-PRIORITY:
-- Statement of Profit and Loss
-- Income Statement
-- Operating results table
-- Financial-year table with numeric values
-
-Look specifically for:
-- Operating Profit
-- Profit from Operations
-- Operating Income
-- Operating Result
-- EBIT, ONLY when it is clearly presented as the company's
-  operating profit measure
-
-IMPORTANT:
-Retrieve the actual numeric financial-statement value.
-
-Do NOT substitute:
-- Gross Profit
-- Profit Before Tax
-- Profit After Tax
-- Net Profit
-- Total Income
-- Total Expenses
-- EBITDA unless the document explicitly identifies it
-  as operating profit
-
-Do NOT prioritize:
-- Operating margin
-- Profitability commentary
-- Management discussion
-- Growth percentages
-
-Retrieve the financial-year column labels and surrounding
-calculation/table context.
-`,
-
-  netProfit: `
-Find the final net-profit / profit-after-tax value from the
-Statement of Profit and Loss for the latest financial year.
-
-PRIORITY:
-- Statement of Profit and Loss
-- Income Statement
-- Profit for the year section
-- Final profit/loss row
-- Financial-year table with numeric values
-
-Look specifically for:
-- Net Profit
-- Profit After Tax
-- PAT
-- Profit for the Year
-- Profit / Loss after Tax
-- Net Income
-- Profit attributable to owners, when this is the final
-  reported profit measure relevant to the company
-
-IMPORTANT:
-Retrieve the actual numeric value from the financial statement.
-
-Do NOT substitute:
-- Profit Before Tax
-- Operating Profit
-- Gross Profit
-- EBITDA
-- Total Income
-
-If the statement contains both:
-- Profit before tax
-- Tax expense
-- Profit for the year
-
-retrieve the surrounding rows as well.
-
-Do NOT prioritize narrative profitability discussion.
-`,
-
-  financeCost: `
-Find the actual finance-cost value from the Statement of
-Profit and Loss or relevant financial note for the latest
-financial year.
-
-PRIORITY:
-- Statement of Profit and Loss
-- Finance-cost row
-- Interest / borrowing-cost note
-- Financial-year table with numeric values
-
-Look specifically for:
-- Finance Cost
-- Finance Costs
-- Interest Expense
-- Interest Cost
-- Borrowing Costs
-- Finance Charges
-
-IMPORTANT:
-Retrieve the actual numeric financial-statement value.
-
-Do NOT substitute:
-- Total expenses
-- Borrowings
-- Principal repayment
-- Loan balance
-- Interest rate
-- Finance-cost percentage
-
-Do NOT prioritize narrative discussion about:
-- Loans
-- Interest rates
-- Financing arrangements
-
-Also retrieve the financial-year column labels.
-`,
-};
-
+  };
 
 /*
  * ============================================================
@@ -383,81 +157,45 @@ Also retrieve the financial-year column labels.
 const stockMetricQueries = {
 
   rawMaterial: `
-Find the latest financial-year INVENTORY value for
-Raw Material.
-
-PRIORITY:
-- Balance Sheet
-- Inventories note
-- Inventory schedule
-- Financial-year table containing numeric values
-
-Look specifically for:
-- Raw Material
-- Raw Materials
-- Raw Material Inventory
-- Raw Material Stock
-
-IMPORTANT:
-Retrieve the actual numeric inventory value and the
-financial-year column labels.
-
-Do NOT infer raw-material inventory from:
-- Purchases
-- Cost of materials consumed
-- Production quantity
-- Inventory turnover
-- Management commentary
+Raw Material
+Raw Materials
+Raw Material Inventory
+Raw Material Stock
+Balance Sheet
+Inventories note
+Inventory schedule
+Financial Highlights
 `,
+
+
 
   workInProgress: `
-Find the latest financial-year INVENTORY value for
-Work in Progress.
-
-PRIORITY:
-- Balance Sheet
-- Inventories note
-- Inventory schedule
-- Financial-year table containing numeric values
-
-Look specifically for:
-- Work in Progress
-- Work-in-Progress
-- WIP
-- Semi Finished Goods
-- Semi-Finished Goods
-- Work in Process
-
-IMPORTANT:
-Retrieve the actual numeric inventory value and the
-financial-year column labels.
-
-Do NOT infer WIP from production information or narrative.
+Work in Progress
+Work-in-Progress
+WIP
+Semi Finished Goods
+Semi-Finished Goods
+Work in Process
+Balance Sheet
+Inventories note
+Inventory schedule
+Financial Highlights
 `,
+
+
 
   finishedGoods: `
-Find the latest financial-year INVENTORY value for
-Finished Goods.
-
-PRIORITY:
-- Balance Sheet
-- Inventories note
-- Inventory schedule
-- Financial-year table containing numeric values
-
-Look specifically for:
-- Finished Goods
-- Finished Products
-- Finished Goods Inventory
-- Finished Stock
-
-IMPORTANT:
-Retrieve the actual numeric inventory value and the
-financial-year column labels.
-
-Do NOT infer finished-goods inventory from sales,
-production quantity, inventory turnover, or commentary.
+Finished Goods
+Finished Products
+Finished Goods Inventory
+Finished Stock
+Balance Sheet
+Inventories note
+Inventory schedule
+Financial Highlights
 `,
+
+
 };
 
 

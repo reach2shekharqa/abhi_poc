@@ -25,6 +25,9 @@ export const groqModel =
   process.env.GROQ_MODEL ||
   "llama-3.3-70b-versatile";
 
+export const llamaCloudApiKey =
+  process.env.LLAMA_CLOUD_API_KEY;
+
 export const embeddingModelName =
   "Xenova/all-MiniLM-L6-v2";
 

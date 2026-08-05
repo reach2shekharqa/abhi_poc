@@ -299,11 +299,12 @@ function App() {
     console.log('[App] New dashboard snapshot:', newSnapshot);
     setDashboardSnapshot(newSnapshot);
 
-    if (payload.unit) {
-      setReportingUnit(payload.unit);
-    } else {
-      setReportingUnit("₹");
-    }
+    const normalizedUnit =
+      payload.unit && payload.unit.toLowerCase() !== "unknown"
+        ? payload.unit
+        : "₹";
+
+    setReportingUnit(normalizedUnit);
   };
 
   return (
